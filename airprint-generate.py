@@ -57,6 +57,7 @@ XML_TEMPLATE = """<service-group>
 
 
 DOCUMENT_TYPES = {
+    # These content-types will be at the front of the list
     'application/pdf': True,
     'application/postscript': True,
     'application/vnd.cups-raster': True,
@@ -69,6 +70,7 @@ DOCUMENT_TYPES = {
     'text/plain': True,
     'text/html': True,
 
+    # These content-types will never be reported
     'image/x-xwindowdump': False,
     'image/x-xpixmap': False,
     'image/x-xbitmap': False,
@@ -83,19 +85,27 @@ DOCUMENT_TYPES = {
     'application/x-csource': False,
     'application/x-cshell': False,
 }
+
 class AirPrintGenerate(object):
-    def __init__(self, host=None, user=None, port=None, verbose=False, directory=None):
+    def __init__(self, host=None, user=None, port=None, verbose=False, directory=None, prefix='AirPrint-'):
         self.host = host
         self.user = user
         self.port = port
         self.verbose = verbose
         self.directory = directory
+        self.prefix = prefix
         
         if self.user:
             cups.setUser(self.user)
     
     def generate(self):
-        conn = cups.Connection()
+        if not self.host:
+            conn = cups.Connection()
+        else:
+            if not self.port:
+                self.port = 631
+            conn = cups.Connection(self.host, self.port)
+            
         printers = conn.getPrinters()
         
         for p, v in printers.items():
@@ -167,7 +177,7 @@ class AirPrintGenerate(object):
                 dt= minidom.getDOMImplementation('').createDocumentType('service-group', None, 'avahi-service.dtd')
                 doc.insertBefore(dt, doc.documentElement)
                 
-                fname = 'airprint-%s.service' % p
+                fname = '%s%s.service' % (self.prefix, p)
                 
                 if self.directory:
                     fname = os.path.join(self.directory, fname)
@@ -186,13 +196,28 @@ class AirPrintGenerate(object):
 
 if __name__ == '__main__':
     parser = optparse.OptionParser()
-    parser.add_option('-H', '--host', action="store", type="string", dest='hostname', help='Hostname of CUPS server', metavar='HOSTNAME')
-    parser.add_option('-P', '--port', action="store", type="int", dest='port', help='Port number of CUPS server', metavar='PORT')
-    parser.add_option('-u', '--user', action="store", type="string", dest='username', help='Username to authenticate with against CUPS', metavar='USER')
-    parser.add_option('-d', '--directory', action="store", type="string", dest='directory', help='Directory to create service files', metavar='DIRECTORY')
-    parser.add_option('-v', '--verbose', action="store_true", dest="verbose", help="Print debugging information to STDERR")
+    parser.add_option('-H', '--host', action="store", type="string",
+        dest='hostname', help='Hostname of CUPS server (optional)', metavar='HOSTNAME')
+    parser.add_option('-P', '--port', action="store", type="int",
+        dest='port', help='Port number of CUPS server', metavar='PORT')
+    parser.add_option('-u', '--user', action="store", type="string",
+        dest='username', help='Username to authenticate with against CUPS',
+        metavar='USER')
+    parser.add_option('-d', '--directory', action="store", type="string",
+        dest='directory', help='Directory to create service files',
+        metavar='DIRECTORY')
+    parser.add_option('-v', '--verbose', action="store_true", dest="verbose",
+        help="Print debugging information to STDERR")
+    parser.add_option('-p', '--prefix', action="store", type="string",
+        dest='prefix', help='Prefix all files with this string', metavar='PREFIX',
+        default='AirPrint-')
     
     (options, args) = parser.parse_args()
+    
+    # TODO XXX FIXME -- if cups login required, need to add
+    # air=username,password
+    from getpass import getpass
+    cups.setPasswordCB(getpass)
     
     if options.directory:
         if not os.path.exists(options.directory):
@@ -204,6 +229,7 @@ if __name__ == '__main__':
         port=options.port,
         verbose=options.verbose,
         directory=options.directory,
+        prefix=options.prefix
     )
     
     apg.generate()
