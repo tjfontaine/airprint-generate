@@ -158,9 +158,9 @@ class AirPrintGenerate(object):
                 fmts = ','.join(fmts+defer)
 
                 dropped = []
+
                 # TODO XXX FIXME all fields should be checked for 255 limit
-                # 255 - pdl= == 251 - 1 just to be safe
-                while len(fmts) >= 250:
+                while len('pdl=%s' % (fmts)) >= 255:
                     (fmts, drop) = fmts.rsplit(',', 1)
                     dropped.append(drop)
 
