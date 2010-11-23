@@ -158,7 +158,7 @@ class AirPrintGenerate(object):
                 fmts = ','.join(fmts+defer)
 
                 dropped = []
-                while len(fmts) >= 255:
+                while len('pdl=%s' % (fmts)) >= 255:
                     (fmts, drop) = fmts.rsplit(',', 1)
                     dropped.append(drop)
 
