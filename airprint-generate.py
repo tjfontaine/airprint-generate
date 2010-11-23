@@ -132,15 +132,21 @@ class AirPrintGenerate(object):
                 service = tree.find('service')
 
                 port = service.find('port')
-                port_no = uri.port
+                port_no = None
+                if hasattr(uri, 'port'):
+                  port_no = uri.port
                 if not port_no:
                     port_no = self.port
                 if not port_no:
                     port_no = cups.getPort()
                 port.text = '%d' % port_no
 
+                if hasattr(uri, 'path'):
+                  rp = uri.path
+                else:
+                  rp = uri[2]
                 path = Element('txt-record')
-                path.text = 'rp=%s' % (uri.path)
+                path.text = 'rp=%s' % (rp)
                 service.append(path)
 
                 desc = Element('txt-record')
