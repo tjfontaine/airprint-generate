@@ -25,18 +25,28 @@ THE SOFTWARE.
 import cups, os, optparse,  urlparse
 import os.path
 from StringIO import StringIO
-from xml.etree.ElementTree import Element, ElementTree, tostring
+
 from xml.dom.minidom import parseString
 from xml.dom import minidom
 
 import sys
 
 try:
-  import lxml.etree as etree
+    import lxml.etree as etree
+    from lxml.etree import Element, ElementTree, tostring
 except:
-  etree = None
+    try:
+        from xml.etree.ElementTree import Element, ElementTree, tostring
+        etree = None
+    except:
+        try:
+            from elementtree import Element, ElementTree, tostring
+            etree = None
+        except:
+            raise 'Failed to find python libxml or elementtree, please install one of those or use python >= 2.5'
 
-XML_TEMPLATE = """<service-group>
+XML_TEMPLATE = """<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
 <name replace-wildcards="yes"></name>
 <service>
 	<type>_ipp._tcp</type>
@@ -173,11 +183,6 @@ class AirPrintGenerate(object):
                 admin = Element('txt-record')
                 admin.text = 'adminurl=%s' % (v['printer-uri-supported'])
                 service.append(admin)
-
-                f = tostring(tree.getroot())
-                doc = parseString(f)
-                dt= minidom.getDOMImplementation('').createDocumentType('service-group', None, 'avahi-service.dtd')
-                doc.insertBefore(dt, doc.documentElement)
                 
                 fname = '%s%s.service' % (self.prefix, p)
                 
@@ -187,9 +192,12 @@ class AirPrintGenerate(object):
                 f = open(fname, 'w')
 
                 if etree:
-                    x = etree.parse(StringIO(doc.toxml()))
-                    x.write(f, pretty_print=True, xml_declaration=True, encoding="UTF-8")
+                    tree.write(f, pretty_print=True, xml_declaration=True, encoding="UTF-8")
                 else:
+                    xmlstr = tostring(tree.getroot())
+                    doc = parseString(xmlstr)
+                    dt= minidom.getDOMImplementation('').createDocumentType('service-group', None, 'avahi-service.dtd')
+                    doc.insertBefore(dt, doc.documentElement)
                     doc.writexml(f)
                 f.close()
                 
