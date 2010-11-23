@@ -117,7 +117,7 @@ class AirPrintGenerate(object):
                 tree.parse(StringIO(XML_TEMPLATE.replace('\n', '').replace('\r', '').replace('\t', '')))
 
                 name = tree.find('name')
-                name.text = 'AirPlay %s @ %%h' % (p)
+                name.text = 'AirPrint %s @ %%h' % (p)
 
                 service = tree.find('service')
 
@@ -158,7 +158,9 @@ class AirPrintGenerate(object):
                 fmts = ','.join(fmts+defer)
 
                 dropped = []
-                while len(fmts) >= 255:
+                # TODO XXX FIXME all fields should be checked for 255 limit
+                # 255 - pdl= == 251 - 1 just to be safe
+                while len(fmts) >= 250:
                     (fmts, drop) = fmts.rsplit(',', 1)
                     dropped.append(drop)
 
