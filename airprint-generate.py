@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import cups, os, optparse,  urlparse
+import cups, os, optparse, re, urlparse
 import os.path
 from StringIO import StringIO
 
@@ -145,6 +145,11 @@ class AirPrintGenerate(object):
                   rp = uri.path
                 else:
                   rp = uri[2]
+                
+                re_match = re.match(r'^//(.*):(\d+)(/.*)', rp)
+                if re_match:
+                  rp = re_match.group(3)
+                  
                 path = Element('txt-record')
                 path.text = 'rp=%s' % (rp)
                 service.append(path)
