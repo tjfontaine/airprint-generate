@@ -72,6 +72,7 @@ DOCUMENT_TYPES = {
     'application/postscript': True,
     'application/vnd.cups-raster': True,
     'application/octet-stream': True,
+    'image/urf': True,
     'image/png': True,
     'image/tiff': True,
     'image/png': True,
@@ -97,13 +98,15 @@ DOCUMENT_TYPES = {
 }
 
 class AirPrintGenerate(object):
-    def __init__(self, host=None, user=None, port=None, verbose=False, directory=None, prefix='AirPrint-'):
+    def __init__(self, host=None, user=None, port=None, verbose=False,
+        directory=None, prefix='AirPrint-', adminurl=False):
         self.host = host
         self.user = user
         self.port = port
         self.verbose = verbose
         self.directory = directory
         self.prefix = prefix
+        self.adminurl = adminurl
         
         if self.user:
             cups.setUser(self.user)
@@ -149,7 +152,13 @@ class AirPrintGenerate(object):
                 re_match = re.match(r'^//(.*):(\d+)(/.*)', rp)
                 if re_match:
                   rp = re_match.group(3)
-                  
+                
+                #Remove leading slashes from path
+                #TODO XXX FIXME I'm worried this will match broken urlparse
+                #results as well (for instance if they don't include a port)
+                #the xml would be malform'd either way
+                rp = re.sub(r'^/+', '', rp)
+                
                 path = Element('txt-record')
                 path.text = 'rp=%s' % (rp)
                 service.append(path)
@@ -196,9 +205,10 @@ class AirPrintGenerate(object):
                 pdl.text = 'pdl=%s' % (fmts)
                 service.append(pdl)
 
-                admin = Element('txt-record')
-                admin.text = 'adminurl=%s' % (v['printer-uri-supported'])
-                service.append(admin)
+                if self.adminurl:
+                    admin = Element('txt-record')
+                    admin.text = 'adminurl=%s' % (v['printer-uri-supported'])
+                    service.append(admin)
                 
                 fname = '%s%s.service' % (self.prefix, p)
                 
@@ -237,6 +247,8 @@ if __name__ == '__main__':
     parser.add_option('-p', '--prefix', action="store", type="string",
         dest='prefix', help='Prefix all files with this string', metavar='PREFIX',
         default='AirPrint-')
+    parser.add_option('-a', '--admin', action="store_true", dest="adminurl",
+        help="Include the printer specified uri as the adminurl")
     
     (options, args) = parser.parse_args()
     
@@ -255,7 +267,8 @@ if __name__ == '__main__':
         port=options.port,
         verbose=options.verbose,
         directory=options.directory,
-        prefix=options.prefix
+        prefix=options.prefix,
+        adminurl=options.adminurl,
     )
     
     apg.generate()
