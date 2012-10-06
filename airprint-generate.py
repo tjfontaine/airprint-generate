@@ -190,6 +190,9 @@ class AirPrintGenerate(object):
                     else:
                         defer.append(a)
 
+                if 'image/urf' not in fmts:
+                    sys.stderr.write('image/urf is not in mime types, %s may not be available on ios6 (see https://github.com/tjfontaine/airprint-generate/issues/5)%s' % (p, os.linesep))
+
                 fmts = ','.join(fmts+defer)
 
                 dropped = []
