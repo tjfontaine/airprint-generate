@@ -9,7 +9,7 @@ application/vnd.cups-raster image/urf 100 rastertourf
 application/pdf image/urf 100 pdftoraster
 # next line is need for generate.py and might be the only one needed
 # will try later maybe myself
-image/urf application/pdf 100 - pdftoraster
+image/urf application/pdf 100 pdftoraster
 application/vnd.apple-postscript image/urf 250 pstocupsraster
 application/vnd.cups-postscript image/urf 250 pstocupsraster
 #
