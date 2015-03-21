@@ -17,6 +17,22 @@ are trimmed out of the list run with the script with the verbose flag (--verbose
 If python-lxml is installed, .service files will be generated in a human
 readble format, I wasn't able to get minidom's version to work acceptably.
 
+**Python Requirements:**
+This script requires a dependency on a pythong library, cups. Install accordingly.  
+
+Debian/Ubuntu:
+```
+sudo apt-get install python-cups
+```
+
+CentOS
+```
+yum install system-config-printer-libs
+```
+
+**CUPS/MIME**
+Cups requires a mimetype for airPrint
+
 Usage: airprint-generate.py [options]
 
 Options:
