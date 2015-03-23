@@ -18,20 +18,18 @@ If python-lxml is installed, .service files will be generated in a human
 readble format, I wasn't able to get minidom's version to work acceptably.
 
 **Python Requirements:**
-This script requires a dependency on a pythong library, cups. Install accordingly.  
+This script requires depends on the python-cups library, and optionally python-lxml to make pretty xml files. 
 
 Debian/Ubuntu:
-```
-sudo apt-get install python-cups
-```
+sudo apt-get install python-cups python-lxml 
 
-CentOS
-```
-yum install system-config-printer-libs
-```
+CentOS:
+sudo yum install system-config-printer-libs
 
-**CUPS/MIME**
-Cups requires a mimetype for airPrint
+Dont forgot to add MIME Types for CUPS: 
+sudo echo 'image/urf urf string(0,UNIRAST<00>)' > /usr/share/cups/mime/airprint.types
+sudo echo 'image/urf application/pdf 100 pdftoraster' > /usr/share/cups/mime/airprint.convs
+ 
 
 Usage: airprint-generate.py [options]
 
