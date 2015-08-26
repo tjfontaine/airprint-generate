@@ -173,6 +173,11 @@ class AirPrintGenerate(object):
                     #results as well (for instance if they don't include a port)
                     #the xml would be malform'd either way
                     rp = re.sub(r'^/+', '', rp)
+
+                    if self.host is not None:
+                        host = Element('host-name')
+                        host.text = self.host
+                        service.append(host)
                 
                     pdl = Element('txt-record')
                     fmts = []
