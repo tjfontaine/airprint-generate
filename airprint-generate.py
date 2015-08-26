@@ -67,6 +67,10 @@ XML_TEMPLATE = """<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
 	<type>_ipp._tcp</type>
 	<subtype>_universal._sub._ipp._tcp</subtype>
 	<port>631</port>
+	<txt-record>txtvers=1</txt-record>
+	<txt-record>qtotal=1</txt-record>
+	<txt-record>Transparent=T</txt-record>
+	<txt-record>URF=DM3</txt-record>
 </service>
 </service-group>"""
 
