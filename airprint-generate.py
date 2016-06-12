@@ -24,9 +24,14 @@ THE SOFTWARE.
 ***
 Discovery by DNS-SD: Copyright (c) 2013 Vidar Tysse <news@vidartysse.net>
 ***
+
+***
+Update for Secure IPPS/HTTPS Printing and CUPS version 2.1:
+Copyright (c) 2016 Julian Pawlowski <julian.pawlowski@gmail.com>
+***
 """
 
-import os, optparse, re, urlparse
+import os, optparse, re, urlparse, pprint
 import os.path
 from StringIO import StringIO
 
@@ -64,20 +69,23 @@ XML_TEMPLATE = """<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
 <service-group>
 <name replace-wildcards="yes"></name>
 <service>
-	<type>_ipp._tcp</type>
-	<subtype>_universal._sub._ipp._tcp</subtype>
+	<type>_ipps._tcp</type>
+	<subtype>_universal._sub._ipps._tcp</subtype>
 	<port>631</port>
 	<txt-record>txtvers=1</txt-record>
 	<txt-record>qtotal=1</txt-record>
 	<txt-record>Transparent=T</txt-record>
 	<txt-record>URF=DM3</txt-record>
+	<txt-record>TLS=1.2</txt-record>
 </service>
 </service-group>"""
 
 #TODO XXX FIXME
-#<txt-record>ty=AirPrint Ricoh Aficio MP 6000</txt-record>
 #<txt-record>Binary=T</txt-record>
+#<txt-record>Bind=T</txt-record>
 #<txt-record>Duplex=T</txt-record>
+#<txt-record>Collate=T</txt-record>
+#<txt-record>Color=T</txt-record>
 #<txt-record>Copies=T</txt-record>
 
 
@@ -148,6 +156,9 @@ class AirPrintGenerate(object):
         
             for p, v in printers.items():
                 if v['printer-is-shared']:
+                    if self.verbose:
+                     pprint.pprint(v)
+
                     attrs = conn.getPrinterAttributes(p)
                     uri = urlparse.urlparse(v['printer-uri-supported'])
 
@@ -208,15 +219,12 @@ class AirPrintGenerate(object):
                         'port'      : port_no,
                         'domain'    : 'local', 
                         'txt'       : {
-                            'txtvers'       : '1',
-                            'qtotal'        : '1',
-                            'Transparent'   : 'T',
-                            'URF'           : 'none',
                             'rp'            : rp,
-                            'note'          : v['printer-info'],
+                            'note'          : v['printer-location'],
                             'product'       : '(GPL Ghostscript)',
+                            'ty'            : v['printer-make-and-model'],
                             'printer-state' : v['printer-state'],
-                            'printer-type'  : v['printer-type'],
+                            'printer-type'  : hex(v['printer-type']),
                             'adminurl'      : v['printer-uri-supported'],
                             'pdl'           : fmts,
                             }
@@ -242,7 +250,7 @@ class AirPrintGenerate(object):
         tree.parse(StringIO(XML_TEMPLATE.replace('\n', '').replace('\r', '').replace('\t', '')))
 
         name_node = tree.find('name')
-        name_node.text = 'AirPrint %s @ %%h' % printer_name
+        name_node.text = 'Sec.AirPrint %s @ %%h' % printer_name
 
         service_node = tree.find('service')
 
