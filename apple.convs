@@ -1,0 +1,86 @@
+#
+# Apple MIME conversions file for CUPS.
+#
+# Copyright 2002-2011 Apple Inc. All rights reserved.
+#
+# General Notes:
+#
+#   The "cost" field must be less than the value for the same entry
+#   in mime.convs so that these filters replaces the ones defined
+#   in that file.
+#
+
+#application/pdf			application/postscript		25	cgpdftops
+#application/pdf			application/vnd.cups-raster	100	cgpdftoraster
+
+#application/x-cshell		application/pdf			33	cgtexttopdf
+#application/x-csource		application/pdf			33	cgtexttopdf
+#application/x-perl		application/pdf			33	cgtexttopdf
+#application/x-shell		application/pdf			33	cgtexttopdf
+#application/xhtml+xml		application/pdf			33	xhtmltopdf
+#text/plain			application/pdf			33	cgtexttopdf
+
+#application/vnd.cups-banner	application/pdf 		33	cgbannertopdf
+
+# Even though using this transformation with raster drivers goes from
+# image->pdf->raster, we'd prefer using this on OS X since things filter
+# tries to mimic the Preview application (and actually respects embedded
+# ColorSync profiles, etc...)
+#image/*				application/pdf			25	cgimagetopdf
+
+# For pdf to pdf conversion with features applied
+#application/pdf			application/vnd.apple-pdf	25	cgpdftopdf
+#application/pdf			application/vnd.cups-pdf	25	cgpdftopdf
+
+# Normalizer conversion to pdf
+#application/postscript		application/vnd.apple-postscript 10	pstoappleps
+#application/vnd.apple-postscript application/pdf    		200	pstopdffilter
+#application/vnd.cups-postscript	application/pdf			200	pstopdffilter
+
+# Handle PC format eps data
+#application/pc-eps		application/pdf			200	pstopdffilter
+#application/pc-eps		application/vnd.cups-raster	250	pstocupsraster
+
+# Filter that efficiently combines pstopdffilter with cgpdftoraster.  The
+# cost for this filter MUST be less than that of pstopdffilter + cgpdftoraster.
+#application/vnd.apple-postscript application/vnd.cups-raster	250	pstocupsraster
+#application/vnd.cups-postscript	application/vnd.cups-raster	250	pstocupsraster
+
+# Convert to AirPrint
+#application/vnd.cups-raster	image/urf			100	rastertourf
+#application/pdf				image/urf			100 cgpdftoraster
+#application/vnd.apple-postscript image/urf	250	pstocupsraster
+#application/vnd.cups-postscript	image/urf	250	pstocupsraster
+
+# IPP Everywhere
+#application/pdf			image/pwg-raster						100	cgpdftoraster
+
+
+
+
+###############
+#
+# Linux adapted Apple MIME conversions file for CUPS.
+#
+# The rest is already being handled by cupsfilters.convs
+#
+
+application/pdf						application/postscript				25	pdftops
+application/pdf						application/vnd.cups-raster			100	pdftoraster
+
+application/xhtml+xml				application/pdf						33	texttopdf
+
+application/vnd.cups-banner			application/pdf 					33	bannertopdf
+
+# Handle PC format eps data
+application/pc-eps					application/pdf						200	pstopdf
+application/pc-eps					application/vnd.cups-postscript		250	pstops
+
+# Convert to AirPrint - requires to compile/install rastertourf first
+#application/vnd.cups-raster 		image/urf							100 rastertourf
+#application/pdf					image/urf							100 pdftoraster
+#application/vnd.apple-postscript	image/urf							250 pstoraster
+#application/vnd.cups-postscript	image/urf							250 pstoraster
+
+# Convert from AirPrint
+image/urf							application/pdf						100 pdftoraster
