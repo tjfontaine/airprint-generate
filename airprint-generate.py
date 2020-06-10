@@ -31,9 +31,10 @@ Copyright (c) 2016 Julian Pawlowski <julian.pawlowski@gmail.com>
 ***
 """
 
-import os, optparse, re, urlparse, pprint
+import os, optparse, re, pprint
+import urllib.parse as urlparse
 import os.path
-from StringIO import StringIO
+from io import StringIO
 
 from xml.dom.minidom import parseString
 from xml.dom import minidom
