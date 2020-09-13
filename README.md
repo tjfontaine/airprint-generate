@@ -1,4 +1,4 @@
-airprint-generate.py
+## airprint-generate.py
 
 This script will generate avahi .service files for shared CUPS printers.
 
@@ -17,7 +17,7 @@ are trimmed out of the list run with the script with the verbose flag (--verbose
 If python-lxml is installed, .service files will be generated in a human
 readble format, I wasn't able to get minidom's version to work acceptably.
 
-Usage: airprint-generate.py [options]
+### Usage: airprint-generate.py [options]
 
 Options:
   -h, --help            show this help message and exit
@@ -30,3 +30,19 @@ Options:
   -v, --verbose         Print debugging information to STDERR
   -p PREFIX, --prefix=PREFIX
                         Prefix all files with this string
+## Docker containerized avahi .service generation
+
+After the printers have been configured in the cups server, docker can interactively generate the avahi .service
+while making use of the container.
+
+* Build the container
+
+```shell
+docker build -t airprint-generate .
+```
+
+* Generate the avahi service by defining the ip address of the cups server
+
+```shell
+docker run --rm -it -v $(pwd):/tmp airprint-generate -H ${CUPS_SERVER_IP} -d /tmp
+```
