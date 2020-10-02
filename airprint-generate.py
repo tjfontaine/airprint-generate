@@ -57,7 +57,7 @@ XML_TEMPLATE = """<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
 	<txt-record>txtvers=1</txt-record>
 	<txt-record>qtotal=1</txt-record>
 	<txt-record>Transparent=T</txt-record>
-	<txt-record>URF=none</txt-record>
+	<txt-record>URF=DM3</txt-record>
 </service>
 </service-group>"""
 
