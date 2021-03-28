@@ -220,7 +220,7 @@ class AirPrintGenerate(object):
                 if self.directory:
                     fname = os.path.join(self.directory, fname)
                 
-                f = open(fname, 'w')
+                f = open(fname, 'wb')
 
                 if etree:
                     tree.write(f, pretty_print=True, xml_declaration=True, encoding="UTF-8")
