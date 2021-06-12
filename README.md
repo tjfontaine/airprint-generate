@@ -19,6 +19,7 @@ readble format, I wasn't able to get minidom's version to work acceptably.
 
 ### Usage: airprint-generate.py [options]
 
+```
 Options:
   -h, --help            show this help message and exit
   -H HOSTNAME, --host=HOSTNAME
@@ -30,6 +31,8 @@ Options:
   -v, --verbose         Print debugging information to STDERR
   -p PREFIX, --prefix=PREFIX
                         Prefix all files with this string
+```
+
 ## Docker containerized avahi .service generation
 
 After the printers have been configured in the cups server, docker can interactively generate the avahi .service
