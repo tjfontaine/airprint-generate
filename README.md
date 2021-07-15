@@ -41,8 +41,8 @@ while making use of the container.
 docker build -t airprint-generate .
 ```
 
-* Generate the avahi service by defining the ip address of the cups server
+* Generate the avahi service by defining the ip address and port of the cups server
 
 ```shell
-docker run --rm -it -v $(pwd):/tmp airprint-generate -H ${CUPS_SERVER_IP} -d /tmp
+docker run --rm -it -v $(pwd):/tmp airprint-generate -H ${CUPS_SERVER_IP} -P ${CUPS_SERVER_PORT} -d /tmp
 ```
