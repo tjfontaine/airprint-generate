@@ -1,3 +1,5 @@
+> **⚠️ This project is archived and no longer maintained.**
+
 ## airprint-generate.py
 
 This script will generate avahi .service files for shared CUPS printers.
