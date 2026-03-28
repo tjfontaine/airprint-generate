@@ -181,6 +181,16 @@ class AirPrintGenerate(object):
                 ptype.text = 'printer-type=%s' % (hex(v['printer-type']))
                 service.append(ptype)
 
+                if attrs['color-supported']:
+                    color = Element('txt-record')
+                    color.text = 'Color=T'
+                    service.append(color)
+
+                if attrs['media-default'] == 'iso_a4_210x297mm':
+                    max_paper = Element('txt-record')
+                    max_paper.text = 'PaperMax=legal-A4'
+                    service.append(max_paper)
+
                 pdl = Element('txt-record')
                 fmts = []
                 defer = []
